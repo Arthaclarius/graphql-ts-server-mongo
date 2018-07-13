@@ -4,10 +4,11 @@ import { Arg, ArgumentValidationError, Ctx, Mutation, Query, Resolver, UseMiddle
 import { User, UserModel } from './user.model'
 
 import { AccountInput } from './types/accountInput'
-import { ContextServer } from '../../server/context'
+import { CtxApp } from '../server/interfaces/CtxApp'
+import { EmailTemplate } from '../email/emailTemplate'
 import { PasswordInput } from './types/passwordInput'
 import { UserErrors } from './user.errors'
-import { createForgotPasswordLink } from '../../utils/createLink/confirmForgotPassword'
+import { UserLogic } from './logic'
 import { isAuthenticated } from './middlewares/isAuthenticated'
 
 @Resolver(() => User)
@@ -24,7 +25,7 @@ export class UserResolver {
 
 	@Query(() => User, { nullable: true })
 	@UseMiddleware(isAuthenticated)
-	async me(@Ctx() { session }: ContextServer) {
+	async me(@Ctx() { session }: CtxApp) {
 		return await UserModel.findById(session.userId).select('-password')
 	}
 
@@ -36,20 +37,11 @@ export class UserResolver {
 			throw new ArgumentValidationError(UserErrors.EmailAlreadyTakenError(email))
 		}
 
-		const user = new User()
-		user.email = email
-		user.password = password
-
-		const userDoc = new UserModel(user)
-		await userDoc.save()
-
-		// await createConfirmEmailLink(email, userDoc.id, redis)
-
-		return userDoc
+		return await UserLogic.registerUser(email, password)
 	}
 
 	@Mutation(() => Boolean)
-	async login(@Arg('login') { email, password }: AccountInput, @Ctx() { session, redis, req }: ContextServer) {
+	async login(@Arg('login') { email, password }: AccountInput, @Ctx() ctx: CtxApp) {
 		const user = await UserModel.findOne({ email } as User)
 
 		if (!user) {
@@ -65,38 +57,38 @@ export class UserResolver {
 			throw new ArgumentValidationError(UserErrors.UserNotConfirmedError())
 		}
 
-		if (!session.userId) {
-			session.userId = user.id
-			if (req.sessionID) {
-				await redis.lpush(user.id, req.sessionID)
-			}
+		if (user.locked) {
+			throw new ArgumentValidationError(UserErrors.UserLockedError())
 		}
+
+		await UserLogic.saveUserSession(user.id, ctx)
 
 		return true
 	}
 
 	@Mutation(() => Boolean)
 	@UseMiddleware(isAuthenticated)
-	async logout(@Ctx() { session }: ContextServer) {
-		return await new Promise((res) =>
-			session.destroy((err) => {
-				if (err) {
-					throw new ArgumentValidationError(UserErrors.LogoutError(err))
-				}
-				res(true)
-			})
-		)
+	async logout(@Ctx() { session, redis }: CtxApp) {
+		const { userId } = session
+		if (!userId) {
+			return new ArgumentValidationError(UserErrors.LogoutError('No session found'))
+		}
+
+		await UserLogic.removeUserSessions(userId, redis)
+
+		return true
 	}
 
 	@Mutation(() => String)
-	async sendForgotPassword(@Arg('email') email: string, @Ctx() { redis }: ContextServer) {
+	async sendForgotPassword(@Arg('email') email: string) {
 		const userDoc = await UserModel.findOne({ email }).select('id')
 
 		if (!userDoc) {
 			throw new ArgumentValidationError(UserErrors.UserNotFound(email))
 		}
 
-		const link = await createForgotPasswordLink(email, userDoc.id.toString(), redis)
+		await UserLogic.lockUser(userDoc.id)
+		const link = await EmailTemplate.forgotPasswordEmail(email, userDoc.id.toString())
 
 		return link
 	}
@@ -104,17 +96,11 @@ export class UserResolver {
 	@Mutation(() => Boolean)
 	async forgotPassword(
 		@Arg('password') { password }: PasswordInput,
-		@Arg('id') id: string,
-		@Ctx() { redis }: ContextServer
+		@Arg('key') key: string,
+		@Ctx() { redis }: CtxApp
 	) {
-		const user = await redis.get(id)
+		const passwordIsChanged = await UserLogic.changeUserPassword(password, key, redis)
 
-		if (user) {
-			await redis.del(id)
-			await UserModel.findByIdAndUpdate(user, { password: await User.hashPassword(password) } as User)
-			return true
-		} else {
-			return false
-		}
+		return passwordIsChanged
 	}
 }

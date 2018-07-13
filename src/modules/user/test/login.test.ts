@@ -12,7 +12,7 @@ const email = UserTest.user.email
 const password = UserTest.user.password
 const unconfirmedEmail = UserTest.unconfirmedUser.email
 
-beforeAll(RegisteUserIfNotExist)
+beforeAll(() => RegisteUserIfNotExist())
 
 test('Login', async function() {
 	const tc = new TestClient(process.env.TEST_URL as string)

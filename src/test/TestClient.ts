@@ -73,10 +73,10 @@ export class TestClient {
 		return this.sendPostGQLServer(query)
 	}
 
-	forgotPassword(id: string, password: string) {
+	forgotPassword(key: string, password: string) {
 		const query = `
 		mutation {
-			forgotPassword(id: "${id}", password: {password: "${password}"})
+			forgotPassword(key: "${key}", password: {password: "${password}"})
 		}
 		`
 		return this.sendPostGQLServer(query)

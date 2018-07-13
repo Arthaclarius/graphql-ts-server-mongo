@@ -4,10 +4,11 @@ import { User } from '../modules/user/user.model'
 import { UserTest } from '../modules/user/test/utils/UserTest'
 import nodeFetch from 'node-fetch'
 
-export async function RegisteUserIfNotExist() {
+export async function RegisteUserIfNotExist(
+	email: string = UserTest.user.email,
+	password: string = UserTest.user.password
+) {
 	try {
-		const email = UserTest.user.email
-		const password = UserTest.user.password
 		const unconfirmedEmail = UserTest.unconfirmedUser.email
 
 		const tc = new TestClient(process.env.TEST_URL as string)

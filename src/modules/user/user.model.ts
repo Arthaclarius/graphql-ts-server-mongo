@@ -16,9 +16,13 @@ export class User {
 	@Column(String, true)
 	public password: string
 
-	@Field(() => Boolean, { nullable: true })
+	@Field(() => Boolean)
 	@Column({ type: Boolean, default: false }, true)
 	public confirmed: boolean
+
+	@Field(() => Boolean)
+	@Column({ type: Boolean, default: false }, true)
+	public locked: boolean
 
 	static async hashPassword(password: string) {
 		return await bcrypt.hash(password, 10)

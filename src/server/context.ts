@@ -6,13 +6,13 @@ import { redis } from '../config/redis.config'
 export type ContextServer = {
 	redis: Redis
 	session: Session
-	req: Express.Request
+	sessionID?: string
 }
 
 export const getContext: ContextCallback = function getContext({ request }) {
 	return {
 		redis,
 		session: request.session,
-		req: request
+		sessionID: request.sessionID
 	} as ContextServer
 }

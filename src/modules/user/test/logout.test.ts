@@ -6,7 +6,7 @@ import { UserTest } from './utils/UserTest'
 
 dotenv.config()
 
-beforeAll(RegisteUserIfNotExist)
+beforeAll(() => RegisteUserIfNotExist())
 
 const email = UserTest.user.email
 const password = UserTest.user.password
@@ -35,6 +35,5 @@ test('Logout Multi', async function() {
 	expect(await session1.me()).toEqual(await session2.me())
 
 	await session1.logout()
-	expect((await session1.me()).data.me).toBeNull()
-	expect((await session2.me()).data.me).not.toBeNull()
+	expect(await session1.me()).toEqual(await session2.me())
 })

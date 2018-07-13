@@ -2,10 +2,10 @@ import * as connectRedis from 'connect-redis'
 import * as express from 'express'
 import * as session from 'express-session'
 
-import { redis } from '../../config/redis.config'
-import { redisSessionPrefix } from './redisPrefix'
+import { RedisPrefix } from '../../redis/redisPrefix'
+import { redisInstance } from '../../redis/RedisInstance'
 
-export function sessionServer(e: express.Application) {
+export function configSession(e: express.Application) {
 	const RedisStore = connectRedis(session)
 	e.use(
 		session({
@@ -13,7 +13,7 @@ export function sessionServer(e: express.Application) {
 			secret: process.env.SESSION_SECRET || 'SECRET',
 			resave: false,
 			saveUninitialized: false,
-			store: new RedisStore({ client: redis as any, prefix: redisSessionPrefix }),
+			store: new RedisStore({ client: redisInstance as any, prefix: RedisPrefix.session }),
 			cookie: {
 				httpOnly: true,
 				secure: process.env.NODE_ENV === 'production',
