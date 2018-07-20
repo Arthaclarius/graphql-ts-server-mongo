@@ -2,7 +2,7 @@ import 'reflect-metadata'
 
 import * as dotenv from 'dotenv'
 
-import { startServer } from './modules/server/startServer'
+import { startServer } from '@server/startServer'
 
 dotenv.config()
 

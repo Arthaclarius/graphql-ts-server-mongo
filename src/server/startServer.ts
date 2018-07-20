@@ -1,27 +1,24 @@
 import * as dotenv from 'dotenv'
 
 import { GraphQLServer } from 'graphql-yoga'
-import { StartDBConnection } from '../config/db.config'
-import { configServer } from './config/config'
-import { controllers } from './controllers'
-import { cors } from './cors'
+import { configServer } from '@server/config'
+import { cors } from '@server/cors'
+import { ctxCallback } from '@server/ctxCallback'
 import { formatArgumentValidationError } from 'type-graphql'
-import { getContext } from './context'
-import { rateLimit } from './config/rateLimit'
-import { schemas } from './schemas'
+import getSchemas from '@server/getSchemas'
+import { startDBConnection } from '@db/startDBConnection'
 
 dotenv.config()
 
 /* Start Server */
 
 export const startServer = async (port: number) => {
-	const schema = await schemas()
-	const server = new GraphQLServer({ schema, context: getContext })
-	await StartDBConnection()
+	const schema = await getSchemas()
+	const server = new GraphQLServer({ schema, context: ctxCallback })
+
+	startDBConnection()
 
 	await configServer(server.express)
-	await controllers(server.express)
-	rateLimit(server.express)
 
 	const app = await server.start(
 		{
@@ -30,7 +27,9 @@ export const startServer = async (port: number) => {
 			debug: false /*process.env.NODE_ENV !== 'production'*/,
 			formatError: formatArgumentValidationError
 		},
-		() => console.log(`Server is running on http://localhost:${port}`)
+		() => {
+			console.log(`Server is running on http://localhost:${port}`)
+		}
 	)
 	return app
 }

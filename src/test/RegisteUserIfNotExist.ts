@@ -1,32 +1,20 @@
-import { ConfirmLink } from '../modules/user/user.controller'
 import { TestClient } from './TestClient'
-import { User } from '../modules/user/user.model'
-import { UserTest } from '../modules/user/test/utils/UserTest'
-import nodeFetch from 'node-fetch'
 
-export async function RegisteUserIfNotExist(
-	email: string = UserTest.user.email,
-	password: string = UserTest.user.password
-) {
+export async function RegisteUserIfNotExist(email: string, password: string, unconfirmedEmail?: string) {
 	try {
-		const unconfirmedEmail = UserTest.unconfirmedUser.email
-
 		const tc = new TestClient(process.env.TEST_URL as string)
 		const resRegister = await tc.register(email, password)
-		await tc.register(unconfirmedEmail, password)
+		if (unconfirmedEmail) {
+			await tc.register(unconfirmedEmail, password)
+		}
 
 		if (!resRegister.data) return
 
-		const user = resRegister.data.register as User | null
+		const id = resRegister.data.register as string | null
 
-		if (user) {
+		if (id) {
 			// Confirm User
-			const responseAddConfirm = await nodeFetch(process.env.TEST_URL + '/api/user/addConfirm/' + user.id)
-			const dataConfirm = (await responseAddConfirm.json()) as ConfirmLink
-
-			if (dataConfirm.link) {
-				await nodeFetch(dataConfirm.link)
-			}
+			await tc.confirmUser(id)
 		}
 	} catch (error) {
 		console.log(error)

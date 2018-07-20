@@ -1,8 +1,8 @@
 import * as uuid from 'uuid/v4'
 
-import { RedisPrefix } from '../../redis/redisPrefix'
-import { redisInstance } from '../../redis/RedisInstance'
-import { sendEmail } from '../sendEmail'
+import { RedisPrefix } from '@redis/RedisPrefix'
+import { redisInstance } from '@redis/redisInstance'
+import { sendEmail } from '@modules/email/sendEmail'
 
 // Time in Minutes
 const TIME_EXPIRATION = Number(process.env.LINK_TIME_FORGOT_PASSWORD as string) * 60
@@ -16,5 +16,5 @@ export default async function forgotPasswordEmail(email: string, user: string) {
 
 	sendEmail(email, 'Confirm Account', `<a href="${link}">Confirm</a>`)
 
-	return link
+	return id
 }

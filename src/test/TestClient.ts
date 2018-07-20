@@ -24,12 +24,19 @@ export class TestClient {
 	register(email: string, password: string) {
 		const query = `
       mutation {
-        register (register: { email: "${email}", password: "${password}" }) {
-          id
-          email
-        }
+        register (register: { email: "${email}", password: "${password}" })
       }
     `
+
+		return this.sendPostGQLServer(query)
+	}
+
+	confirmUser(id: string) {
+		const query = `
+			mutation {
+				confirmUser(id: "${id}")
+			}
+		`
 
 		return this.sendPostGQLServer(query)
 	}
