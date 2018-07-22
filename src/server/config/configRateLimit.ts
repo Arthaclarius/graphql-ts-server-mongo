@@ -1,18 +1,18 @@
-import * as RateLimit from 'express-rate-limit'
-import * as RedisStore from 'rate-limit-redis'
+import { Application } from 'express';
+import * as RateLimit from 'express-rate-limit';
+import * as RedisStore from 'rate-limit-redis';
 
-import { Application } from 'express'
-import { redisInstance } from '@redis/redisInstance'
+import { redisInstance } from '@redis/redisInstance';
 
 export function configRateLimit(e: Application) {
 	const limiter = new RateLimit({
+		delayMs: 0,
+		max: 100,
 		store: new RedisStore({
 			client: redisInstance
 		}),
-		windowMs: 15 * 60 * 1000, // 15 minutes
-		max: 100, // limit each IP to 100 requests per windowMs
-		delayMs: 0 // disable delaying - full speed until the max limit is reached
-	})
+		windowMs: 15 * 60 * 1000
+	});
 
-	e.use(limiter)
+	e.use(limiter);
 }

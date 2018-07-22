@@ -1,8 +1,9 @@
-import { Redis } from 'ioredis'
-import { Session } from '@server/interfaces/Session'
+import { Redis } from 'ioredis';
 
-export interface CtxApp {
-	session: Session
-	sessionID?: string
-	redis: Redis
+import { ISession } from './Session';
+
+export interface ICtxApp {
+	session: ISession;
+	sessionID?: string;
+	redis: Redis;
 }

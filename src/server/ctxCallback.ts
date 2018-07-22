@@ -1,11 +1,13 @@
-import { ContextCallback } from 'graphql-yoga/dist/types'
-import { CtxApp } from '@server/interfaces/CtxApp'
-import { redisInstance } from '@redis/redisInstance'
+// tslint:disable-next-line:no-submodule-imports
+import { ContextCallback } from 'graphql-yoga/dist/types';
 
-export const ctxCallback: ContextCallback = function({ request }) {
+import { redisInstance } from '@redis/redisInstance';
+import { ICtxApp } from '@server/interfaces';
+
+export const ctxCallback: ContextCallback = ({ request }) => {
 	return {
+		redis: redisInstance,
 		session: request.session,
-		sessionID: request.sessionID,
-		redis: redisInstance
-	} as CtxApp
-}
+		sessionID: request.sessionID
+	} as ICtxApp;
+};

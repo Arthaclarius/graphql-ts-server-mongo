@@ -1,23 +1,23 @@
-import * as dotenv from 'dotenv'
-import * as faker from 'faker'
+import * as dotenv from 'dotenv';
+import * as faker from 'faker';
 
-import { RegisteUserIfNotExist } from '../test/RegisteUserIfNotExist'
-import { TestClient } from '../test/TestClient'
+import { RegisteUserIfNotExist } from '../test/RegisteUserIfNotExist';
+import { TestClient } from '../test/TestClient';
 
-dotenv.config()
+dotenv.config();
 
-const email = faker.internet.exampleEmail()
-const password = faker.internet.password(6)
+const email = faker.internet.exampleEmail();
+const password = faker.internet.password(6);
 
-beforeAll(() => RegisteUserIfNotExist(email, password))
+beforeAll(() => RegisteUserIfNotExist(email, password));
 
-test('Me', async function() {
-	const tc = new TestClient(process.env.TEST_URL as string)
+test('Me', async () => {
+	const tc = new TestClient(process.env.TEST_URL as string);
 
-	const resLogin = await tc.login(email, password)
-	expect(resLogin.data.login).toEqual(true)
+	const resLogin = await tc.login(email, password);
+	expect(resLogin.data.login).toEqual(true);
 
-	const resMe = await tc.me()
+	const resMe = await tc.me();
 
-	expect(resMe.data.me.email).toEqual(email)
-})
+	expect(resMe.data.me.email).toEqual(email);
+});

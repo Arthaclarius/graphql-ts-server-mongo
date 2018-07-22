@@ -1,7 +1,7 @@
-import { removeUserSessions } from '@modules/login/removeUserSessions'
-import { saveUserSession } from '@modules/login/saveUserSession'
+import { removeUserSessions } from './removeUserSessions';
+import { saveUserSession } from './saveUserSession';
 
 export const LoginModule = {
 	removeUserSessions,
 	saveUserSession
-}
+};

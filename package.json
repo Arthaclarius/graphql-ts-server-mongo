@@ -6,6 +6,7 @@
   "author": "Arthaclarius <sgcg5@hotmail.com>",
   "license": "MIT",
   "scripts": {
+    "lint": "tslint -p tsconfig.json -c tslint.json -t verbose",
     "start": "SET NODE_ENV=develop&& nodemon --exec ts-node -r tsconfig-paths/register src/index.ts",
     "start:test": "start-server-and-test test:server http://localhost:4040 test",
     "build:graphql": "gql2ts src/graphql/modules/*/*.graphql -o src/graphql/types/schema.d.ts",
@@ -64,6 +65,7 @@
     "ts-jest": "^22.4.6",
     "ts-node": "^6.0.5",
     "tsconfig-paths": "^3.4.2",
+    "tslint-config-prettier": "^1.13.0",
     "typescript": "2.9.1",
     "yarn": "^1.7.0"
   },

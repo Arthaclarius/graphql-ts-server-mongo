@@ -1,26 +1,30 @@
-import { Arg, ArgumentValidationError, Mutation, Resolver } from 'type-graphql'
+import { Arg, ArgumentValidationError, Mutation, Resolver } from 'type-graphql';
 
-import { AccountInput } from '@validations/accountInput'
-import { RegisterErrors } from '@errors/RegisterErrors'
-import { RegisterModule } from '@modules/register'
-import { UserModel } from '@models/User'
+import { RegisterErrors } from '@errors/RegisterErrors';
+import { UserModel } from '@models/User';
+import { RegisterModule } from '@modules/register';
+import { AccountInput } from '@validations/accountInput';
 
 @Resolver()
 export class RegisterResolver {
 	@Mutation(() => String)
-	async register(@Arg('register') { email, password }: AccountInput) {
-		const existUser = (await UserModel.findOne({ email }).select('id')) ? true : false
+	public async register(@Arg('register') { email, password }: AccountInput) {
+		const existUser = (await UserModel.findOne({ email }).select('id'))
+			? true
+			: false;
 
 		if (existUser) {
-			throw new ArgumentValidationError(RegisterErrors.EmailAlreadyTakenError(email))
+			throw new ArgumentValidationError(
+				RegisterErrors.EmailAlreadyTakenError(email)
+			);
 		}
 
-		return await RegisterModule.registerUser(email, password)
+		return RegisterModule.registerUser(email, password);
 	}
 
 	@Mutation(() => Boolean)
-	async confirmUser(@Arg('id') id: string) {
-		const isConfirmed = await RegisterModule.confirmUser(id)
-		return isConfirmed
+	public async confirmUser(@Arg('id') id: string) {
+		const isConfirmed = await RegisterModule.confirmUser(id);
+		return isConfirmed;
 	}
 }

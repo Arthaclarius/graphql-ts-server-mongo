@@ -1,3 +1,3 @@
-export interface Session extends Express.Session {
-	userId?: string
+export interface ISession extends Express.Session {
+	userId?: string;
 }

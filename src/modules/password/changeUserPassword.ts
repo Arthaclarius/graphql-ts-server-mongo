@@ -1,22 +1,27 @@
-import { Redis } from 'ioredis'
-import { RedisPrefix } from '@redis/RedisPrefix'
-import { UserModel } from '@models/User'
-import { unlockUser } from '@modules/user/unlockUser'
+import { Redis } from 'ioredis';
 
-export async function changeUserPassword(newPassword: string, key: string, redis: Redis) {
-	const userId = await redis.get(`${RedisPrefix.forgotPassword}${key}`)
+import { UserModel } from '@models/User';
+import { UserModule } from '@modules/user';
+import { RedisPrefix } from '@redis/RedisPrefix';
+
+export async function changeUserPassword(
+	newPassword: string,
+	key: string,
+	redis: Redis
+) {
+	const userId = await redis.get(`${RedisPrefix.forgotPassword}${key}`);
 
 	if (userId) {
-		await redis.del(key)
+		await redis.del(key);
 
-		await unlockUser(userId)
+		await UserModule.unlockUser(userId);
 
-		const userDoc = await UserModel.findById(userId)
+		const userDoc = await UserModel.findById(userId);
 		if (userDoc) {
-			userDoc.password = newPassword
-			userDoc.save()
-			return true
+			userDoc.password = newPassword;
+			userDoc.save();
+			return true;
 		}
 	}
-	return false
+	return false;
 }

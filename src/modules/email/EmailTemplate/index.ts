@@ -1,7 +1,7 @@
-import confirmRegisterEmail from '@modules/email/EmailTemplate/emailRegister'
-import forgotPasswordEmail from '@modules/email/EmailTemplate/forgotPasswordEmail'
+import confirmRegisterEmail from './emailRegister';
+import forgotPasswordEmail from './forgotPasswordEmail';
 
 export const EmailTemplate = {
 	confirmRegisterEmail,
 	forgotPasswordEmail
-}
+};

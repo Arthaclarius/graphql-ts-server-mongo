@@ -1,10 +1,14 @@
-import * as SparkPost from 'sparkpost'
-import * as dotenv from 'dotenv'
+import * as dotenv from 'dotenv';
+import * as SparkPost from 'sparkpost';
 
-dotenv.config()
+dotenv.config();
 
-const client = new SparkPost()
-export async function sendEmail(address: string, subject: string, content: string) {
+const client = new SparkPost();
+export async function sendEmail(
+	address: string,
+	subject: string,
+	content: string
+) {
 	try {
 		await client.transmissions.send({
 			options: {
@@ -16,9 +20,9 @@ export async function sendEmail(address: string, subject: string, content: strin
 				html: `<html><body><p>SparkPost - ${content}</p></body></html>`
 			},
 			recipients: [ { address } ]
-		})
-		console.log('Email Sent')
-	} catch (_error) {
-		console.log('Email Error')
+		});
+		console.log('Email Sent');
+	} catch (_) {
+		console.log('Email Error');
 	}
 }

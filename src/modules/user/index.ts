@@ -1,7 +1,7 @@
-import { lockUser } from '@modules/user/lockUser'
-import { unlockUser } from '@modules/user/unlockUser'
+import { lockUser } from './lockUser';
+import { unlockUser } from './unlockUser';
 
 export const UserModule = {
 	lockUser,
 	unlockUser
-}
+};

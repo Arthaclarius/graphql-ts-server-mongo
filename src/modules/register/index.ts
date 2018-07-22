@@ -1,7 +1,7 @@
-import { confirmUser } from '@modules/register/confirmUser'
-import { registerUser } from '@modules/register/registerUser'
+import { confirmUser } from './confirmUser';
+import { registerUser } from './registerUser';
 
 export const RegisterModule = {
 	confirmUser,
 	registerUser
-}
+};

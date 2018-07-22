@@ -1,24 +1,24 @@
-import { Arg, Ctx, Query, Resolver, UseMiddleware } from 'type-graphql'
-import { User, UserModel } from '@models/User'
+import { Arg, Ctx, Query, Resolver, UseMiddleware } from 'type-graphql';
 
-import { CtxApp } from '@server/interfaces/CtxApp'
-import { isAuthenticated } from '@resolvers/middlewares/isAuthenticated'
+import { User, UserModel } from '@models/User';
+import { isAuthenticated } from '@resolvers/middlewares';
+import { ICtxApp } from '@server/interfaces';
 
 @Resolver(() => User)
 export class UserResolver {
 	@Query(() => [ User ])
-	async users() {
-		return await UserModel.find().select('-password')
+	public async users() {
+		return UserModel.find().select('-password');
 	}
 
 	@Query(() => User)
-	async findUserById(@Arg('id') id: string) {
-		return await UserModel.findById(id).select('-password')
+	public async findUserById(@Arg('id') id: string) {
+		return UserModel.findById(id).select('-password');
 	}
 
 	@Query(() => User, { nullable: true })
 	@UseMiddleware(isAuthenticated)
-	async me(@Ctx() { session }: CtxApp) {
-		return await UserModel.findById(session.userId).select('-password')
+	public async me(@Ctx() { session }: ICtxApp) {
+		return UserModel.findById(session.userId).select('-password');
 	}
 }

@@ -1,7 +1,14 @@
-import { ValidationError } from 'class-validator'
+import { ValidationError } from 'class-validator';
 
-export namespace RegisterErrors {
-	export function EmailAlreadyTakenError(email: string): ValidationError[] {
-		return [ { property: 'email', value: email, children: [], constraints: { email: 'Email already taken' } } ]
+export class RegisterErrors {
+	public static EmailAlreadyTakenError(email: string): ValidationError[] {
+		return [
+			{
+				property: 'email',
+				value: email,
+				children: [],
+				constraints: { email: 'Email already taken' }
+			}
+		];
 	}
 }

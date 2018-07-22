@@ -1,5 +1,5 @@
-import { changeUserPassword } from '@modules/password/changeUserPassword'
+import { changeUserPassword } from './changeUserPassword';
 
 export const PasswordModule = {
 	changeUserPassword
-}
+};

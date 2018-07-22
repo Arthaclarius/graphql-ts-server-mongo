@@ -1,12 +1,11 @@
-import * as Redis from 'ioredis'
-
-import { Service } from 'typedi'
+import * as Redis from 'ioredis';
+import { Service } from 'typedi';
 
 @Service()
 export class RedisService {
-	public redis: Redis.Redis
+	public redis: Redis.Redis;
 
 	constructor() {
-		this.redis = new Redis()
+		this.redis = new Redis();
 	}
 }
